@@ -95,7 +95,7 @@ export default function ComplianceContent() {
         <div className="w-10 h-10" />
       </div>
 
-      <div className="px-4 md:px-8 py-6 md:py-8 max-w-[1100px] space-y-5 md:space-y-6">
+      <div className="px-4 md:px-8 xl:px-12 py-6 md:py-8 max-w-[1100px] mx-auto space-y-5 md:space-y-6">
 
         {/* Score + Summary Card */}
         <motion.div initial="hidden" animate="visible" variants={fadeUp(0)}

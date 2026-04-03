@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Clock, AlertTriangle, CalendarDays, Bell, Star,
-  CheckCircle2, TrendingUp, Briefcase, Shield, ChevronRight, Menu,
+  CheckCircle2, ChevronRight, Menu,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/store/useAppStore';
@@ -27,16 +27,20 @@ const availableShifts = [
   { hospital: "Guy's Hospital",          dept: 'Cardiac Unit · Day Shift', rate: '£28/hr', date: 'March 22, 2024', time: '07:00 – 19:00' },
 ];
 
-const stats = [
-  { label: 'Shifts This Month', value: '12', icon: Briefcase,   color: 'text-blue-600',   bg: 'bg-blue-50'   },
-  { label: 'Hours Worked',      value: '144', icon: Clock,       color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  { label: 'Compliance Score',  value: '92%', icon: Shield,      color: 'text-emerald-600',bg: 'bg-emerald-50'},
-  { label: 'Avg. Rating',       value: '4.8', icon: TrendingUp,  color: 'text-violet-600', bg: 'bg-violet-50' },
-];
+
+const container = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+};
+
+const cardSpring = {
+  hidden:  { opacity: 0, y: 24, scale: 0.97 },
+  visible: { opacity: 1, y: 0,  scale: 1,    transition: { type: 'spring' as const, stiffness: 260, damping: 22 } },
+};
 
 const fadeUp = (delay = 0) => ({
   hidden:  { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } },
+  visible: { opacity: 1, y: 0, transition: { delay, duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } },
 });
 
 export default function DashboardContent() {
@@ -72,7 +76,7 @@ export default function DashboardContent() {
         </div>
       </div>
 
-      <div className="px-4 md:px-8 py-6 md:py-8 max-w-[1100px] space-y-5 md:space-y-7">
+      <div className="px-4 md:px-8 xl:px-12 py-6 md:py-8 max-w-[1100px] mx-auto space-y-5 md:space-y-7">
 
         {/* Profile Banner */}
         <motion.div initial="hidden" animate="visible" variants={fadeUp(0)}
@@ -116,9 +120,13 @@ export default function DashboardContent() {
         {/* Alert Banner */}
         <motion.div initial="hidden" animate="visible" variants={fadeUp(0.06)}>
           <div className="flex items-start gap-3 px-4 md:px-5 py-4 bg-amber-50 border border-amber-200 rounded-xl">
-            <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+            <motion.div
+              animate={{ scale: [1, 1.15, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+            >
               <AlertTriangle className="w-4 h-4 text-amber-600" />
-            </div>
+            </motion.div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-amber-900">Action Required</p>
               <p className="text-sm text-amber-700 mt-0.5">Your visa expires in 32 days. Renew it now to keep receiving shift opportunities.</p>
@@ -129,47 +137,38 @@ export default function DashboardContent() {
           </div>
         </motion.div>
 
-        {/* Stats Row */}
-        <motion.div initial="hidden" animate="visible" variants={fadeUp(0.1)}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((s, i) => (
-              <div key={i} className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-3">
-                  <div className={`w-10 h-10 ${s.bg} rounded-xl flex items-center justify-center`}>
-                    <s.icon className={`w-5 h-5 ${s.color}`} />
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-300" />
-                </div>
-                <p className="text-2xl font-bold text-slate-900 tracking-tight">{s.value}</p>
-                <p className="text-sm text-slate-500 mt-0.5">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
         {/* Compliance Status */}
         <motion.div initial="hidden" animate="visible" variants={fadeUp(0.14)}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-slate-900">Compliance Status</h3>
-            <button onClick={() => setSidebarTab('compliance')} className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+            <span className="text-sm text-slate-300 font-medium flex items-center gap-1 cursor-not-allowed">
               View all <ChevronRight className="w-4 h-4" />
-            </button>
+            </span>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-4" variants={container} initial="hidden" animate="visible">
             {complianceItems.map((c, i) => (
-              <div key={i} className={`bg-white rounded-xl border p-5 ${c.ok ? 'border-slate-200' : 'border-amber-200 bg-amber-50/30'}`}>
+              <motion.div
+                key={i}
+                variants={cardSpring}
+                whileHover={{ y: -4, boxShadow: c.ok ? '0 12px 32px rgba(0,0,0,0.09)' : '0 12px 32px rgba(245,158,11,0.15)', transition: { type: 'spring', stiffness: 400, damping: 20 } }}
+                className={`group relative bg-white rounded-xl border p-5 cursor-default overflow-hidden ${c.ok ? 'border-slate-200' : 'border-amber-200 bg-amber-50/30'}`}
+              >
                 <div className="flex items-center justify-between mb-3">
                   {c.ok
                     ? <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-emerald-500" /></div>
-                    : <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-amber-500" /></div>
+                    : <motion.div animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 2.5, repeat: Infinity }} className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-amber-500" /></motion.div>
                   }
+                  <div className={`w-2 h-2 rounded-full ${c.ok ? 'bg-emerald-400' : 'bg-amber-400'}`}
+                    style={{ boxShadow: c.ok ? '0 0 6px rgba(52,211,153,0.8)' : '0 0 6px rgba(251,191,36,0.8)' }} />
                 </div>
                 <p className="text-sm font-semibold text-slate-900">{c.title}</p>
                 <p className={`text-sm font-medium mt-0.5 ${c.ok ? 'text-emerald-600' : 'text-amber-600'}`}>{c.status}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{c.detail}</p>
-              </div>
+                {/* Bottom sweep line */}
+                <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ${c.ok ? 'from-emerald-400 to-teal-400' : 'from-amber-400 to-orange-400'}`} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Two-column: Upcoming + Available */}
@@ -179,13 +178,18 @@ export default function DashboardContent() {
           <motion.div initial="hidden" animate="visible" variants={fadeUp(0.18)}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-slate-900">Upcoming Shifts</h3>
-              <button onClick={() => setSidebarTab('shifts')} className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+              <span className="text-sm text-slate-300 font-medium flex items-center gap-1 cursor-not-allowed">
                 View all <ChevronRight className="w-4 h-4" />
-              </button>
+              </span>
             </div>
-            <div className="space-y-3">
+            <motion.div className="space-y-3" variants={container} initial="hidden" animate="visible">
               {upcomingShifts.map((s, i) => (
-                <div key={i} className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+                <motion.div
+                  key={i}
+                  variants={cardSpring}
+                  whileHover={{ y: -3, boxShadow: '0 16px 40px rgba(37,99,235,0.1)', transition: { type: 'spring', stiffness: 400, damping: 20 } }}
+                  className="group relative bg-white rounded-xl border border-slate-200 p-5 cursor-default overflow-hidden"
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <p className="text-sm font-semibold text-slate-900">{s.hospital}</p>
@@ -205,22 +209,28 @@ export default function DashboardContent() {
                       <Clock className="w-3.5 h-3.5 text-blue-500" />{s.time}
                     </span>
                   </div>
-                </div>
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 to-indigo-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Available Shifts */}
           <motion.div initial="hidden" animate="visible" variants={fadeUp(0.22)}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-slate-900">Matching Shifts</h3>
-              <button onClick={() => setSidebarTab('shifts')} className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+              <span className="text-sm text-slate-300 font-medium flex items-center gap-1 cursor-not-allowed">
                 Browse all <ChevronRight className="w-4 h-4" />
-              </button>
+              </span>
             </div>
-            <div className="space-y-3">
+            <motion.div className="space-y-3" variants={container} initial="hidden" animate="visible">
               {availableShifts.map((s, i) => (
-                <div key={i} className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+                <motion.div
+                  key={i}
+                  variants={cardSpring}
+                  whileHover={{ y: -3, boxShadow: '0 16px 40px rgba(37,99,235,0.1)', transition: { type: 'spring', stiffness: 400, damping: 20 } }}
+                  className="group relative bg-white rounded-xl border border-slate-200 p-5 cursor-default overflow-hidden"
+                >
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-slate-900">{s.hospital}</p>
@@ -238,15 +248,16 @@ export default function DashboardContent() {
                       </span>
                     </div>
                     <Button
-                      onClick={() => setSidebarTab('shifts')}
-                      className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold px-4 h-8 shrink-0"
+                      disabled
+                      className="bg-slate-200 text-slate-400 rounded-lg text-xs font-semibold px-4 h-8 shrink-0 cursor-not-allowed"
                     >
                       Apply
                     </Button>
                   </div>
-                </div>
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
 
         </div>

@@ -15,6 +15,7 @@ const plans = [
     features: ['Unlimited job applications', 'Profile management', 'Compliance tracking'],
     btn: 'Join Free',
     popular: false,
+    accent: 'from-emerald-500 to-teal-500',
   },
   {
     name: 'Small Care Providers',
@@ -25,6 +26,7 @@ const plans = [
     features: ['Up to 50 staff members', 'Basic compliance tracking', 'Email support', 'Shift scheduling'],
     btn: 'Start Trial',
     popular: false,
+    accent: 'from-violet-500 to-purple-500',
   },
   {
     name: 'Medium Providers',
@@ -35,6 +37,7 @@ const plans = [
     features: ['Up to 200 staff members', 'Advanced analytics', 'Priority support', 'Custom integrations'],
     btn: 'Start Trial',
     popular: true,
+    accent: 'from-blue-600 to-indigo-500',
   },
   {
     name: 'Large NHS Trusts',
@@ -45,6 +48,7 @@ const plans = [
     features: ['Unlimited staff members', 'Dedicated account manager', '24/7 priority support', 'Custom development'],
     btn: 'Contact Sales',
     popular: false,
+    accent: 'from-amber-500 to-orange-500',
   },
 ];
 
@@ -89,40 +93,68 @@ export default function PricingSection() {
         </motion.div>
 
         {/* Pricing cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <motion.div
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-5"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } } }}
+        >
           {plans.map((p, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
-              whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className={`relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ${
+              variants={{
+                hidden: { opacity: 0, y: 32, scale: 0.95 },
+                visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring' as const, stiffness: 200, damping: 20 } },
+              }}
+              whileHover={{
+                y: p.popular ? -10 : -6,
+                boxShadow: p.popular
+                  ? '0 28px 64px rgba(37,99,235,0.22)'
+                  : '0 16px 40px rgba(0,0,0,0.1)',
+                transition: { type: 'spring', stiffness: 300, damping: 18 },
+              }}
+              className={`group relative flex flex-col rounded-2xl overflow-hidden cursor-default ${
                 p.popular
                   ? 'border-2 border-blue-400/60 shadow-[0_0_0_4px_rgba(37,99,235,0.08),0_12px_40px_rgba(37,99,235,0.18)] bg-white'
-                  : 'border border-slate-200/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:border-blue-100'
+                  : 'border border-slate-200/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)]'
               }`}
             >
-              {/* Popular: top accent bar */}
-              {p.popular && (
-                <div className="h-1 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-500 w-full" />
+              {/* Popular: animated shimmer top bar */}
+              {p.popular ? (
+                <div className="relative h-1 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-500" />
+                  <motion.div
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1.5 }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                  />
+                </div>
+              ) : (
+                <div className="h-1 bg-transparent group-hover:bg-slate-100" />
               )}
 
               <div className="p-6 flex-1 flex flex-col">
-                {/* Popular badge */}
                 {p.popular && (
                   <div className="mb-4">
-                    <span className="inline-flex items-center text-[10.5px] font-bold px-2.5 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full uppercase tracking-wider shadow-sm">
+                    <motion.span
+                      animate={{ opacity: [0.85, 1, 0.85] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="inline-flex items-center text-[10.5px] font-bold px-2.5 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full uppercase tracking-wider shadow-sm"
+                    >
                       Most Popular
-                    </span>
+                    </motion.span>
                   </div>
                 )}
 
                 {/* Icon */}
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${p.popular ? 'bg-blue-600' : 'bg-slate-100'}`}>
+                <motion.div
+                  whileHover={{ scale: 1.12, rotate: -8 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${p.popular ? 'bg-blue-600' : 'bg-slate-100'}`}
+                >
                   <p.icon className={`w-5 h-5 ${p.popular ? 'text-white' : 'text-slate-400'}`} />
-                </div>
+                </motion.div>
 
                 <h3 className="text-[14px] font-semibold text-slate-900 mb-1.5">{p.name}</h3>
                 <div className="flex items-baseline gap-1 mb-1.5">
@@ -135,30 +167,42 @@ export default function PricingSection() {
 
                 <ul className="space-y-2.5 mb-7 flex-1">
                   {p.features.map((f, fi) => (
-                    <li key={fi} className="flex items-start gap-2.5">
+                    <motion.li
+                      key={fi}
+                      initial={{ opacity: 0, x: -8 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.15 + fi * 0.06, duration: 0.35 }}
+                      className="flex items-start gap-2.5"
+                    >
                       <div className={`w-[18px] h-[18px] rounded-full flex items-center justify-center shrink-0 mt-[1px] ${p.popular ? 'bg-blue-100' : 'bg-slate-100'}`}>
                         <Check className={`w-2.5 h-2.5 ${p.popular ? 'text-blue-600' : 'text-slate-500'}`} />
                       </div>
                       <span className="text-[13px] text-slate-600 leading-snug">{f}</span>
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
 
-                <Button
-                  onClick={() => navigateTo('signup')}
-                  className={`w-full rounded-xl h-[44px] text-[13px] font-semibold group mt-auto transition-all ${
-                    p.popular
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-[0_2px_8px_rgba(37,99,235,0.3)] hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)]'
-                      : 'bg-slate-900 hover:bg-slate-800 text-white'
-                  }`}
-                >
-                  {p.btn}
-                  <ArrowRight className="w-3.5 h-3.5 ml-1.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                </Button>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
+                  <Button
+                    onClick={() => navigateTo('signup')}
+                    className={`w-full rounded-xl h-[44px] text-[13px] font-semibold mt-auto transition-all ${
+                      p.popular
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-[0_2px_8px_rgba(37,99,235,0.3)] hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)]'
+                        : 'bg-slate-900 hover:bg-slate-800 text-white'
+                    }`}
+                  >
+                    {p.btn}
+                    <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                  </Button>
+                </motion.div>
               </div>
+
+              {/* Bottom accent line — sweeps in on hover like FeaturesSection */}
+              <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r ${p.accent} scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`} />
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

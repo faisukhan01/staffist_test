@@ -121,7 +121,7 @@ export default function MyShiftsContent() {
         </div>
       </div>
 
-      <div className="px-4 md:px-8 py-5 md:py-8 max-w-[1100px] space-y-4 md:space-y-7">
+      <div className="px-4 md:px-8 xl:px-12 py-5 md:py-8 max-w-[1100px] mx-auto space-y-4 md:space-y-7">
 
         {/* ── Stats Strip ── */}
         <motion.div initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.3 }}

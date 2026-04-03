@@ -1,10 +1,56 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { useAppStore } from '@/store/useAppStore';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ShieldCheck, Users, Globe, TrendingUp, Star } from 'lucide-react';
 import Image from 'next/image';
+
+function AnimatedStat({ value, label }: { value: string; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+  const [displayed, setDisplayed] = useState('0');
+
+  useEffect(() => {
+    if (!inView) return;
+    // Extract numeric part and suffix
+    const match = value.match(/^([\d,.]+)(.*)$/);
+    if (!match) { setDisplayed(value); return; }
+    const target = parseFloat(match[1].replace(/,/g, ''));
+    const suffix = match[2];
+    const prefix = value.startsWith('£') ? '£' : '';
+    const duration = 1200;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = eased * target;
+      const formatted = target >= 1000
+        ? Math.round(current).toLocaleString()
+        : target % 1 !== 0
+          ? current.toFixed(1)
+          : Math.round(current).toString();
+      setDisplayed(`${prefix}${formatted}${suffix}`);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [inView, value]);
+
+  return (
+    <div ref={ref}>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5 }}
+        className="text-[22px] font-bold text-slate-900 tracking-tight leading-none"
+      >
+        {displayed}
+      </motion.p>
+      <p className="text-[12px] text-slate-400 mt-1">{label}</p>
+    </div>
+  );
+}
 
 const heroStats = [
   { value: '2,500+', label: 'Professionals' },
@@ -157,10 +203,7 @@ export default function HeroSection() {
               className="grid grid-cols-2 sm:grid-cols-4 gap-5 pt-8 border-t border-slate-100/80"
             >
               {heroStats.map((s, i) => (
-                <div key={i}>
-                  <p className="text-[22px] font-bold text-slate-900 tracking-tight leading-none">{s.value}</p>
-                  <p className="text-[12px] text-slate-400 mt-1">{s.label}</p>
-                </div>
+                <AnimatedStat key={i} value={s.value} label={s.label} />
               ))}
             </motion.div>
           </div>
@@ -194,9 +237,14 @@ export default function HeroSection() {
             {/* Floating card — bottom left */}
             <motion.div
               initial={{ opacity: 0, y: 20, x: -10 }}
-              animate={{ opacity: 1, y: 0, x: 0 }}
-              transition={{ delay: 1.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute -bottom-6 -left-10 bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] p-4 border border-slate-100 min-w-[185px]"
+              animate={{ opacity: 1, y: [0, -6, 0] }}
+              transition={{
+                opacity: { delay: 1.05, duration: 0.5 },
+                y: { delay: 1.05, duration: 3.5, repeat: Infinity, ease: 'easeInOut' },
+                x: { delay: 1.05, duration: 0.5 },
+              }}
+              whileHover={{ scale: 1.04, boxShadow: '0 16px 48px rgba(16,185,129,0.18)' }}
+              className="absolute -bottom-6 -left-10 bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] p-4 border border-slate-100 min-w-[185px] cursor-default"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center shrink-0">
@@ -212,9 +260,14 @@ export default function HeroSection() {
             {/* Floating card — top right */}
             <motion.div
               initial={{ opacity: 0, y: -20, x: 10 }}
-              animate={{ opacity: 1, y: 0, x: 0 }}
-              transition={{ delay: 1.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute top-4 -right-10 bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] p-4 border border-slate-100 min-w-[165px]"
+              animate={{ opacity: 1, y: [0, -8, 0] }}
+              transition={{
+                opacity: { delay: 1.2, duration: 0.5 },
+                y: { delay: 1.4, duration: 4, repeat: Infinity, ease: 'easeInOut' },
+                x: { delay: 1.2, duration: 0.5 },
+              }}
+              whileHover={{ scale: 1.04, boxShadow: '0 16px 48px rgba(37,99,235,0.18)' }}
+              className="absolute top-4 -right-10 bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] p-4 border border-slate-100 min-w-[165px] cursor-default"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
