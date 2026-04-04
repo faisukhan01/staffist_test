@@ -10,6 +10,7 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
+  ArrowLeft,
   Chrome,
   Apple,
   Shield,
@@ -309,6 +310,7 @@ interface LoginFormProps {
 }
 
 function LoginForm({ onToggle, onSignIn }: LoginFormProps) {
+  const { navigateTo } = useAppStore();
   const [role, setRole] = useState<LoginRole>('user');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -458,6 +460,14 @@ function LoginForm({ onToggle, onSignIn }: LoginFormProps) {
           Don&apos;t have an account?{' '}
           <button type="button" onClick={onToggle} className="text-[#667eea] hover:text-[#764ba2] font-semibold transition-colors">Sign Up</button>
         </p>
+        <button
+          type="button"
+          onClick={() => navigateTo('landing')}
+          className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-600 transition-colors mt-3"
+        >
+          <ArrowLeft size={13} />
+          Back to Home
+        </button>
       </div>
     </div>
   );
@@ -608,9 +618,19 @@ function SignupForm({ onToggle }: SignupFormProps) {
 export default function AnimatedLoginPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const { signIn } = useAppStore();
+  const frontRef = useRef<HTMLDivElement>(null);
+  const backRef = useRef<HTMLDivElement>(null);
 
   const handleToggle = useCallback(() => {
-    setIsFlipped((prev) => !prev);
+    setIsFlipped((prev) => {
+      const next = !prev;
+      // Scroll the face that is about to become visible back to top
+      setTimeout(() => {
+        if (next) backRef.current?.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+        else frontRef.current?.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      }, 50);
+      return next;
+    });
   }, []);
 
   return (
@@ -628,13 +648,13 @@ export default function AnimatedLoginPage() {
             <div className="w-full md:w-[42%] flex-shrink-0">
               <CoverPanel type="login" />
             </div>
-            <div className="w-full md:w-[58%] min-w-0 overflow-y-auto">
+            <div ref={frontRef} className="w-full md:w-[58%] min-w-0 overflow-y-auto">
               <LoginForm onToggle={handleToggle} onSignIn={signIn} />
             </div>
           </div>
           {/* Back Face - Signup */}
           <div className="flip-face flip-face-back flex flex-col md:flex-row rounded-2xl shadow-2xl shadow-black/30 overflow-hidden bg-white">
-            <div className="w-full md:w-[58%] min-w-0 order-2 md:order-1 overflow-y-auto">
+            <div ref={backRef} className="w-full md:w-[58%] min-w-0 order-2 md:order-1 overflow-y-auto">
               <SignupForm onToggle={handleToggle} />
             </div>
             <div className="w-full md:w-[42%] flex-shrink-0 order-1 md:order-2">

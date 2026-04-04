@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 import AuthCoverPanel from '@/components/auth/AuthCoverPanel';
 import SignUpForm from '@/components/auth/SignUpForm';
 import { ParticleBackground } from '@/components/auth/AuthShared';
@@ -9,13 +12,30 @@ import { ParticleBackground } from '@/components/auth/AuthShared';
 export default function SignUpPage() {
   const router = useRouter();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+
   const handleSuccess = () => {
     router.push('/sign-in');
   };
 
   return (
-    <div className="auth-bg min-h-screen flex items-center justify-center p-4 sm:p-6 relative">
+    <div className="auth-bg min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 relative">
       <ParticleBackground />
+
+      {/* Back to Sign In */}
+      <div className="relative z-10 w-full max-w-[820px] mb-3">
+        <Link
+          href="/sign-in"
+          className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Sign In
+        </Link>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}

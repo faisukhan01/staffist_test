@@ -44,6 +44,11 @@ export default function Home() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Scroll to top whenever the page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  }, [currentPage]);
+
   // Derive what to show synchronously (mirrors the effect logic for SSR/initial render)
   const validPages = ['landing', 'signin', 'dashboard', 'compliance'];
   const safePage = !validPages.includes(currentPage)

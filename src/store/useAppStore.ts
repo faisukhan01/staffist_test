@@ -44,7 +44,6 @@ export const useAppStore = create<AppState>()(
     {
       name: 'staffist-app-state',
       partialize: (state) => ({
-        currentPage: state.currentPage,
         isAuthenticated: state.isAuthenticated,
         sidebarTab: state.sidebarTab,
       }),

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { User, Lock, Shield, AtSign, ArrowRight } from 'lucide-react';
+import { User, Lock, Shield, AtSign, ArrowRight, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { AuthInput, SocialLoginButtons, Divider, getPasswordStrength } from './AuthShared';
 
@@ -49,14 +49,15 @@ export default function SignUpForm({ onSuccess }: SignUpFormProps) {
   return (
     <div className="w-full px-6 pt-5 pb-6 sm:px-8 sm:pt-6 sm:pb-8 md:px-10 md:pt-7 md:pb-10 box-border">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full">
-        {/* Brand name — text replica of logo */}
-        <div className="mb-5 mt-1">
-          <span
-            className="text-[26px] font-extrabold tracking-tight"
-            style={{ color: '#1a3c6e', fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif', letterSpacing: '-0.5px' }}
+        {/* Back to Sign In */}
+        <div className="mb-4 mt-1">
+          <Link
+            href="/sign-in"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 transition-colors"
           >
-            Staff<span style={{ color: '#2563eb' }}>ist</span>
-          </span>
+            <ArrowLeft size={14} />
+            Back to Sign In
+          </Link>
         </div>
 
         <h2 className="text-2xl font-bold text-gray-800 mb-1">Create Account</h2>

@@ -6,9 +6,9 @@ import { LayoutDashboard, CalendarClock, ShieldCheck, LogOut, X } from 'lucide-r
 import Image from 'next/image';
 
 const mainNav = [
-  { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard, disabled: false },
-  { id: 'shifts' as const, label: 'My Shifts', icon: CalendarClock, disabled: true },
-  { id: 'compliance' as const, label: 'Compliance', icon: ShieldCheck, disabled: true },
+  { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'shifts' as const, label: 'My Shifts', icon: CalendarClock },
+  { id: 'compliance' as const, label: 'Compliance', icon: ShieldCheck },
 ];
 
 export default function Sidebar() {
@@ -40,17 +40,15 @@ export default function Sidebar() {
         <div className="space-y-1">
           {mainNav.map((item) => {
             const active = sidebarTab === item.id;
+            const nonClickable = item.id === 'shifts' || item.id === 'compliance';
             return (
               <button
                 key={item.id}
-                onClick={item.disabled ? undefined : () => setSidebarTab(item.id)}
-                disabled={item.disabled}
+                onClick={nonClickable ? undefined : () => setSidebarTab(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-[13.5px] font-medium transition-all duration-150 ${
-                  item.disabled
-                    ? 'text-[#CBD5E1] cursor-not-allowed'
-                    : active
-                      ? 'bg-[#2563EB] text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)]'
-                      : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B]'
+                  active
+                    ? 'bg-[#2563EB] text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)]'
+                    : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B]'
                 }`}
               >
                 <item.icon className="w-[17px] h-[17px] shrink-0" strokeWidth={active ? 2.2 : 1.8} />

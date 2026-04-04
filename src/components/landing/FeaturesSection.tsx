@@ -92,7 +92,7 @@ export default function FeaturesSection() {
           variants={container}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true, margin: '-20px' }}
         >
           {features.map((f, i) => (
             <motion.div
@@ -103,6 +103,7 @@ export default function FeaturesSection() {
                 boxShadow: `0 24px 60px ${f.iconGlow}`,
                 transition: { type: 'spring', stiffness: 300, damping: 20 },
               }}
+              whileTap={{ scale: 0.98 }}
               className={`group relative bg-white rounded-2xl p-7 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] ${f.borderHover} transition-colors duration-300 overflow-hidden cursor-default`}
             >
               {/* Shimmer sweep on hover */}
@@ -128,8 +129,8 @@ export default function FeaturesSection() {
               <h3 className="text-[16px] font-semibold text-slate-900 mb-3 leading-snug">{f.title}</h3>
               <p className="text-[14px] text-slate-500 leading-[1.7]">{f.desc}</p>
 
-              {/* Bottom gradient accent line */}
-              <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r ${f.accentColor} scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left rounded-b-2xl`} />
+              {/* Bottom gradient accent line — always visible on mobile, hover-animated on desktop */}
+              <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r ${f.accentColor} scale-x-100 md:scale-x-0 md:group-hover:scale-x-100 transition-transform duration-400 origin-left rounded-b-2xl`} />
             </motion.div>
           ))}
         </motion.div>

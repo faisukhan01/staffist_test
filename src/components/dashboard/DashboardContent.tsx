@@ -141,7 +141,7 @@ export default function DashboardContent() {
         <motion.div initial="hidden" animate="visible" variants={fadeUp(0.14)}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-slate-900">Compliance Status</h3>
-            <span className="text-sm text-slate-300 font-medium flex items-center gap-1 cursor-not-allowed">
+            <span className="text-sm text-blue-600 font-medium flex items-center gap-1 cursor-default hover:text-blue-700 transition-colors">
               View all <ChevronRight className="w-4 h-4" />
             </span>
           </div>
@@ -165,7 +165,7 @@ export default function DashboardContent() {
                 <p className={`text-sm font-medium mt-0.5 ${c.ok ? 'text-emerald-600' : 'text-amber-600'}`}>{c.status}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{c.detail}</p>
                 {/* Bottom sweep line */}
-                <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ${c.ok ? 'from-emerald-400 to-teal-400' : 'from-amber-400 to-orange-400'}`} />
+                <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r scale-x-100 md:scale-x-0 md:group-hover:scale-x-100 transition-transform duration-300 origin-left ${c.ok ? 'from-emerald-400 to-teal-400' : 'from-amber-400 to-orange-400'}`} />
               </motion.div>
             ))}
           </motion.div>
@@ -178,7 +178,7 @@ export default function DashboardContent() {
           <motion.div initial="hidden" animate="visible" variants={fadeUp(0.18)}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-slate-900">Upcoming Shifts</h3>
-              <span className="text-sm text-slate-300 font-medium flex items-center gap-1 cursor-not-allowed">
+              <span className="text-sm text-blue-600 font-medium flex items-center gap-1 cursor-default hover:text-blue-700 transition-colors">
                 View all <ChevronRight className="w-4 h-4" />
               </span>
             </div>
@@ -209,7 +209,7 @@ export default function DashboardContent() {
                       <Clock className="w-3.5 h-3.5 text-blue-500" />{s.time}
                     </span>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 to-indigo-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 to-indigo-500 scale-x-100 md:scale-x-0 md:group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                 </motion.div>
               ))}
             </motion.div>
@@ -219,7 +219,7 @@ export default function DashboardContent() {
           <motion.div initial="hidden" animate="visible" variants={fadeUp(0.22)}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-slate-900">Matching Shifts</h3>
-              <span className="text-sm text-slate-300 font-medium flex items-center gap-1 cursor-not-allowed">
+              <span className="text-sm text-blue-600 font-medium flex items-center gap-1 cursor-default hover:text-blue-700 transition-colors">
                 Browse all <ChevronRight className="w-4 h-4" />
               </span>
             </div>
@@ -247,14 +247,15 @@ export default function DashboardContent() {
                         <Clock className="w-3.5 h-3.5" />{s.time}
                       </span>
                     </div>
-                    <Button
-                      disabled
-                      className="bg-slate-200 text-slate-400 rounded-lg text-xs font-semibold px-4 h-8 shrink-0 cursor-not-allowed"
-                    >
-                      Apply
-                    </Button>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold px-4 h-8 shrink-0 cursor-default transition-colors"
+                      >
+                        Apply
+                      </Button>
+                    </motion.div>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 to-violet-500 scale-x-100 md:scale-x-0 md:group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                 </motion.div>
               ))}
             </motion.div>

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, ArrowRight, ShieldCheck, User } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck, User, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { AuthInput, SocialLoginButtons, Divider } from './AuthShared';
 
@@ -49,14 +49,15 @@ export default function SignInForm({ onSuccess }: SignInFormProps) {
   return (
     <div className="w-full px-6 pt-5 pb-6 sm:px-8 sm:pt-6 sm:pb-8 md:px-10 md:pt-7 md:pb-10 box-border">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full">
-        {/* Brand name — text replica of logo */}
-        <div className="mb-5 mt-1">
-          <span
-            className="text-[26px] font-extrabold tracking-tight"
-            style={{ color: '#1a3c6e', fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif', letterSpacing: '-0.5px' }}
+        {/* Back to Home */}
+        <div className="mb-4 mt-1">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 transition-colors"
           >
-            Staff<span style={{ color: '#2563eb' }}>ist</span>
-          </span>
+            <ArrowLeft size={14} />
+            Back to Home
+          </Link>
         </div>
 
         <h2 className="text-2xl font-bold text-gray-800 mb-1">Sign In</h2>
@@ -174,6 +175,12 @@ export default function SignInForm({ onSuccess }: SignInFormProps) {
           Don&apos;t have an account?{' '}
           <Link href="/sign-up" className="font-semibold text-[#667eea] hover:text-[#5b4fcf] transition-colors">
             Sign Up
+          </Link>
+        </p>
+        <p className="text-sm text-center mt-3">
+          <Link href="/" className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors">
+            <ArrowLeft size={13} />
+            Back to Home
           </Link>
         </p>
       </motion.div>

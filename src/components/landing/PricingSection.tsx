@@ -97,7 +97,7 @@ export default function PricingSection() {
           className="grid md:grid-cols-2 lg:grid-cols-4 gap-5"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true, margin: '-20px' }}
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } } }}
         >
           {plans.map((p, i) => (
@@ -114,6 +114,7 @@ export default function PricingSection() {
                   : '0 16px 40px rgba(0,0,0,0.1)',
                 transition: { type: 'spring', stiffness: 300, damping: 18 },
               }}
+              whileTap={{ scale: 0.98 }}
               className={`group relative flex flex-col rounded-2xl overflow-hidden cursor-default ${
                 p.popular
                   ? 'border-2 border-blue-400/60 shadow-[0_0_0_4px_rgba(37,99,235,0.08),0_12px_40px_rgba(37,99,235,0.18)] bg-white'
@@ -198,8 +199,8 @@ export default function PricingSection() {
                 </motion.div>
               </div>
 
-              {/* Bottom accent line — sweeps in on hover like FeaturesSection */}
-              <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r ${p.accent} scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`} />
+              {/* Bottom accent line — always visible on mobile, hover-animated on desktop */}
+              <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r ${p.accent} scale-x-100 md:scale-x-0 md:group-hover:scale-x-100 transition-transform duration-300 origin-left`} />
             </motion.div>
           ))}
         </motion.div>
