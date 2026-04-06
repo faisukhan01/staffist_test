@@ -40,11 +40,10 @@ export default function Sidebar() {
         <div className="space-y-1">
           {mainNav.map((item) => {
             const active = sidebarTab === item.id;
-            const nonClickable = item.id === 'shifts' || item.id === 'compliance';
             return (
               <button
                 key={item.id}
-                onClick={nonClickable ? undefined : () => setSidebarTab(item.id)}
+                onClick={() => setSidebarTab(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-[13.5px] font-medium transition-all duration-150 ${
                   active
                     ? 'bg-[#2563EB] text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)]'

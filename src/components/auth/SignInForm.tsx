@@ -8,12 +8,13 @@ import { AuthInput, SocialLoginButtons, Divider } from './AuthShared';
 
 interface SignInFormProps {
   onSuccess?: () => void;
+  onRoleChange?: (role: 'user' | 'admin') => void;
+  role: 'user' | 'admin';
 }
 
 type Role = 'user' | 'admin';
 
-export default function SignInForm({ onSuccess }: SignInFormProps) {
-  const [role, setRole] = useState<Role>('user');
+export default function SignInForm({ onSuccess, onRoleChange, role }: SignInFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -40,10 +41,10 @@ export default function SignInForm({ onSuccess }: SignInFormProps) {
   };
 
   const handleRoleSwitch = (r: Role) => {
-    setRole(r);
     setEmail('');
     setPassword('');
     setErrors({});
+    onRoleChange?.(r);
   };
 
   return (
@@ -60,8 +61,14 @@ export default function SignInForm({ onSuccess }: SignInFormProps) {
           </Link>
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-1">Sign In</h2>
-        <p className="text-gray-400 text-sm mb-5">Welcome back! Please sign in to continue</p>
+        <h2 className="text-2xl font-bold text-gray-800 mb-1">
+          {role === 'admin' ? 'Admin Sign In' : 'Sign In'}
+        </h2>
+        <p className="text-gray-400 text-sm mb-5">
+          {role === 'admin'
+            ? 'Welcome, Admin! Sign in to manage your team, approve shifts, and oversee compliance.'
+            : 'Welcome back! Sign in to view your shifts, check compliance status, and connect with your team.'}
+        </p>
 
         {/* Role toggle */}
         <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl mb-6">

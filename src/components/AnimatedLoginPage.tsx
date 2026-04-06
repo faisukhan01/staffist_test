@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import {
   User,
@@ -262,12 +262,32 @@ function Divider() {
 
 interface CoverPanelProps {
   type: 'login' | 'signup';
+  role?: 'user' | 'admin';
 }
 
-function CoverPanel({ type }: CoverPanelProps) {
+const coverContent = {
+  user: {
+    heading: 'Welcome Back!',
+    subtext: 'Sign in to manage your shifts, check compliance status, and connect with your healthcare team.',
+  },
+  admin: {
+    heading: 'Welcome, Admin!',
+    subtext: 'Sign in to manage your team, approve shifts, and oversee compliance across your organisation.',
+  },
+};
+
+function CoverPanel({ type, role = 'user' }: CoverPanelProps) {
   const isLogin = type === 'login';
+  const content = coverContent[role];
   return (
-    <div className="cover-gradient relative flex flex-col items-center justify-center px-6 py-8 sm:px-8 sm:py-10 md:p-12 min-h-[180px] sm:min-h-[200px] md:min-h-full rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
+    <div
+      className="relative flex flex-col items-center justify-center px-6 py-8 sm:px-8 sm:py-10 md:p-12 min-h-[180px] sm:min-h-[200px] md:min-h-full rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden transition-all duration-500"
+      style={{
+        background: isLogin && role === 'admin'
+          ? 'linear-gradient(145deg, #1e1b4b 0%, #4338ca 60%, #6366f1 100%)'
+          : 'linear-gradient(145deg, #667eea 0%, #764ba2 60%, #8b6fd4 100%)',
+      }}
+    >
       <FloatingShapes />
       <div className="glow-circle absolute w-48 h-48 rounded-full bg-white/5 -top-10 -left-10" />
       <div className="glow-circle absolute w-36 h-36 rounded-full bg-white/5 -bottom-8 -right-8" style={{ animationDelay: '2s' }} />
@@ -275,26 +295,34 @@ function CoverPanel({ type }: CoverPanelProps) {
         <div className="mb-4 md:mb-6 fade-in-slide" style={{ '--delay': '0.2s' } as React.CSSProperties}>
           {isLogin ? <WelcomePersonIllustration /> : <DeskPersonIllustration />}
         </div>
-        <motion.h2
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="text-2xl sm:text-3xl md:text-4xl font-bold italic text-white mb-2 md:mb-3 leading-tight tracking-wide drop-shadow-lg"
-          style={{ fontFamily: 'var(--font-playfair), serif' }}
-        >
-          {isLogin ? 'Welcome Back!' : 'Hello, Friend!'}
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="text-white/80 text-xs sm:text-sm leading-relaxed max-w-[210px] sm:max-w-[230px] mx-auto tracking-wide"
-          style={{ fontFamily: 'var(--font-jakarta), sans-serif', fontWeight: 300 }}
-        >
-          {isLogin
-            ? 'Sign in to manage shifts, compliance, and your healthcare team.'
-            : 'Join Staffist and connect with NHS-compliant healthcare opportunities.'}
-        </motion.p>
+        <AnimatePresence mode="wait">
+          <motion.h2
+            key={`cover-heading-${role}-${type}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-bold italic text-white mb-2 md:mb-3 leading-tight tracking-wide drop-shadow-lg"
+            style={{ fontFamily: 'var(--font-playfair), serif' }}
+          >
+            {isLogin ? content.heading : 'Hello, Friend!'}
+          </motion.h2>
+        </AnimatePresence>
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={`cover-subtext-${role}-${type}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+            className="text-white/80 text-xs sm:text-sm leading-relaxed max-w-[210px] sm:max-w-[230px] mx-auto tracking-wide"
+            style={{ fontFamily: 'var(--font-jakarta), sans-serif', fontWeight: 300 }}
+          >
+            {isLogin
+              ? content.subtext
+              : 'Join Staffist and connect with NHS-compliant healthcare opportunities.'}
+          </motion.p>
+        </AnimatePresence>
       </div>
     </div>
   );
@@ -307,9 +335,10 @@ type LoginRole = 'user' | 'admin';
 interface LoginFormProps {
   onToggle: () => void;
   onSignIn: () => void;
+  onRoleChange: (role: 'user' | 'admin') => void;
 }
 
-function LoginForm({ onToggle, onSignIn }: LoginFormProps) {
+function LoginForm({ onToggle, onSignIn, onRoleChange }: LoginFormProps) {
   const { navigateTo } = useAppStore();
   const [role, setRole] = useState<LoginRole>('user');
   const [email, setEmail] = useState('');
@@ -322,6 +351,7 @@ function LoginForm({ onToggle, onSignIn }: LoginFormProps) {
 
   const handleRoleSwitch = (r: LoginRole) => {
     setRole(r);
+    onRoleChange(r);
     setEmail('');
     setPassword('');
     setErrors({});
@@ -617,6 +647,7 @@ function SignupForm({ onToggle }: SignupFormProps) {
 
 export default function AnimatedLoginPage() {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [loginRole, setLoginRole] = useState<'user' | 'admin'>('user');
   const { signIn } = useAppStore();
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
@@ -634,8 +665,7 @@ export default function AnimatedLoginPage() {
   }, []);
 
   return (
-    <div className="login-bg flex items-center justify-center min-h-screen p-3 sm:p-4 md:p-6">
-      <ParticleBackground />
+    <div className="bg-white flex items-center justify-center min-h-screen p-3 sm:p-4 md:p-6">
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
@@ -646,10 +676,10 @@ export default function AnimatedLoginPage() {
           {/* Front Face - Login */}
           <div className="flip-face flex flex-col md:flex-row rounded-2xl shadow-2xl shadow-black/30 overflow-hidden bg-white">
             <div className="w-full md:w-[42%] flex-shrink-0">
-              <CoverPanel type="login" />
+              <CoverPanel type="login" role={loginRole} />
             </div>
             <div ref={frontRef} className="w-full md:w-[58%] min-w-0 overflow-y-auto">
-              <LoginForm onToggle={handleToggle} onSignIn={signIn} />
+              <LoginForm onToggle={handleToggle} onSignIn={signIn} onRoleChange={setLoginRole} />
             </div>
           </div>
           {/* Back Face - Signup */}

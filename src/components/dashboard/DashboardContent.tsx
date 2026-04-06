@@ -141,9 +141,9 @@ export default function DashboardContent() {
         <motion.div initial="hidden" animate="visible" variants={fadeUp(0.14)}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-slate-900">Compliance Status</h3>
-            <span className="text-sm text-blue-600 font-medium flex items-center gap-1 cursor-default hover:text-blue-700 transition-colors">
+            <button onClick={() => setSidebarTab('compliance')} className="text-sm text-blue-600 font-medium flex items-center gap-1 hover:text-blue-700 transition-colors">
               View all <ChevronRight className="w-4 h-4" />
-            </span>
+            </button>
           </div>
           <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-4" variants={container} initial="hidden" animate="visible">
             {complianceItems.map((c, i) => (
@@ -178,9 +178,9 @@ export default function DashboardContent() {
           <motion.div initial="hidden" animate="visible" variants={fadeUp(0.18)}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-slate-900">Upcoming Shifts</h3>
-              <span className="text-sm text-blue-600 font-medium flex items-center gap-1 cursor-default hover:text-blue-700 transition-colors">
+              <button onClick={() => setSidebarTab('shifts')} className="text-sm text-blue-600 font-medium flex items-center gap-1 hover:text-blue-700 transition-colors">
                 View all <ChevronRight className="w-4 h-4" />
-              </span>
+              </button>
             </div>
             <motion.div className="space-y-3" variants={container} initial="hidden" animate="visible">
               {upcomingShifts.map((s, i) => (
@@ -219,9 +219,9 @@ export default function DashboardContent() {
           <motion.div initial="hidden" animate="visible" variants={fadeUp(0.22)}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-slate-900">Matching Shifts</h3>
-              <span className="text-sm text-blue-600 font-medium flex items-center gap-1 cursor-default hover:text-blue-700 transition-colors">
+              <button onClick={() => setSidebarTab('shifts')} className="text-sm text-blue-600 font-medium flex items-center gap-1 hover:text-blue-700 transition-colors">
                 Browse all <ChevronRight className="w-4 h-4" />
-              </span>
+              </button>
             </div>
             <motion.div className="space-y-3" variants={container} initial="hidden" animate="visible">
               {availableShifts.map((s, i) => (
@@ -249,7 +249,8 @@ export default function DashboardContent() {
                     </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <Button
-                        className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold px-4 h-8 shrink-0 cursor-default transition-colors"
+                        onClick={() => setSidebarTab('shifts')}
+                        className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold px-4 h-8 shrink-0 transition-colors"
                       >
                         Apply
                       </Button>

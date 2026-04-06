@@ -1,18 +1,37 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CoverBgShapes, WelcomePersonIllustration, DeskPersonIllustration } from './AuthShared';
 
 interface AuthCoverPanelProps {
   type: 'sign-in' | 'sign-up';
+  role?: 'user' | 'admin';
 }
 
-export default function AuthCoverPanel({ type }: AuthCoverPanelProps) {
+const signInContent = {
+  user: {
+    heading: 'Welcome Back!',
+    subtext: 'Sign in to manage your shifts, check compliance status, and connect with your healthcare team.',
+    gradient: 'linear-gradient(145deg, #7c6fe0 0%, #5b4fcf 40%, #8b6fd4 100%)',
+  },
+  admin: {
+    heading: 'Welcome, Admin!',
+    subtext: 'Sign in to manage your team, approve shifts, and oversee compliance across your organisation.',
+    gradient: 'linear-gradient(145deg, #d97706 0%, #b45309 40%, #f59e0b 100%)',
+  },
+};
+
+export default function AuthCoverPanel({ type, role = 'user' }: AuthCoverPanelProps) {
   const isSignIn = type === 'sign-in';
+  const content = signInContent[role];
 
   return (
-    <div className="relative flex flex-col items-center justify-center p-8 md:p-10 h-full min-h-[260px] overflow-hidden"
-      style={{ background: 'linear-gradient(145deg, #7c6fe0 0%, #5b4fcf 40%, #8b6fd4 100%)' }}>
+    <motion.div
+      className="relative flex flex-col items-center justify-center p-8 md:p-10 h-full min-h-[260px] overflow-hidden"
+      animate={{ background: isSignIn ? content.gradient : 'linear-gradient(145deg, #7c6fe0 0%, #5b4fcf 40%, #8b6fd4 100%)' }}
+      transition={{ duration: 0.4 }}
+      style={{ background: isSignIn ? content.gradient : 'linear-gradient(145deg, #7c6fe0 0%, #5b4fcf 40%, #8b6fd4 100%)' }}
+    >
       <CoverBgShapes />
 
       <div className="relative z-10 flex flex-col items-center text-center">
@@ -24,24 +43,32 @@ export default function AuthCoverPanel({ type }: AuthCoverPanelProps) {
           {isSignIn ? <WelcomePersonIllustration /> : <DeskPersonIllustration />}
         </motion.div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-2xl font-bold text-white mb-2">
-          {isSignIn ? 'Welcome Back!' : 'Hello, Friend!'}
-        </motion.h2>
+        <AnimatePresence mode="wait">
+          <motion.h2
+            key={`heading-${role}-${type}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="text-2xl font-bold text-white mb-2">
+            {isSignIn ? content.heading : 'Hello, Friend!'}
+          </motion.h2>
+        </AnimatePresence>
 
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.5 }}
-          className="text-white/75 text-sm leading-relaxed max-w-[200px]">
-          {isSignIn
-            ? 'Sign in to manage shifts, compliance, and your healthcare team.'
-            : 'Join Staffist and connect with NHS-compliant healthcare opportunities.'}
-        </motion.p>
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={`subtext-${role}-${type}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+            className="text-white/75 text-sm leading-relaxed max-w-[200px]">
+            {isSignIn
+              ? content.subtext
+              : 'Join Staffist and connect with NHS-compliant healthcare opportunities.'}
+          </motion.p>
+        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 }

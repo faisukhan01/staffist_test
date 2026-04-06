@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Home } from 'lucide-react';
@@ -8,11 +8,11 @@ import Link from 'next/link';
 import { useAppStore } from '@/store/useAppStore';
 import AuthCoverPanel from '@/components/auth/AuthCoverPanel';
 import SignInForm from '@/components/auth/SignInForm';
-import { ParticleBackground } from '@/components/auth/AuthShared';
 
 export default function SignInPage() {
   const router = useRouter();
   const { signIn } = useAppStore();
+  const [role, setRole] = useState<'user' | 'admin'>('user');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -26,17 +26,12 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="auth-bg min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 relative">
-      <ParticleBackground />
-
+    <div className="bg-white min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 relative">
       {/* Back to Home */}
       <div className="relative z-10 w-full max-w-[820px] mb-3">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors"
-        >
-          <Home className="w-4 h-4" />
-          Back to Home
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
         </Link>
       </div>
       <motion.div
@@ -47,11 +42,11 @@ export default function SignInPage() {
       >
         {/* Cover — left side (hidden on mobile) */}
         <div className="hidden md:flex md:w-[42%] flex-shrink-0">
-          <AuthCoverPanel type="sign-in" />
+          <AuthCoverPanel type="sign-in" role={role} />
         </div>
         {/* Form — full width on mobile, 58% on md+ */}
         <div className="w-full md:w-[58%] min-w-0">
-          <SignInForm onSuccess={handleSuccess} />
+          <SignInForm onSuccess={handleSuccess} role={role} onRoleChange={setRole} />
         </div>
       </motion.div>
     </div>
