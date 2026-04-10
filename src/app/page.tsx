@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -30,9 +30,17 @@ const contentVariants = {
 
 export default function Home() {
   const { currentPage, sidebarTab, isAuthenticated, navigateTo } = useAppStore();
+  const [mounted, setMounted] = useState(false);
+
+  // Rehydrate zustand persist store and mark as mounted
+  useEffect(() => {
+    useAppStore.persist.rehydrate();
+    setMounted(true);
+  }, []);
 
   // Guard: run once on mount to enforce rules without calling setState during render
   useEffect(() => {
+    if (!mounted) return;
     const validPages = ['landing', 'signin', 'dashboard', 'compliance'];
     if (!validPages.includes(currentPage)) {
       navigateTo('landing');
@@ -42,14 +50,30 @@ export default function Home() {
     if (!isAuthenticated && currentPage !== 'landing' && currentPage !== 'signin') {
       navigateTo('landing');
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [mounted]);
 
   // Scroll to top whenever the page changes
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
   }, [currentPage]);
 
-  // Derive what to show synchronously (mirrors the effect logic for SSR/initial render)
+  // Render landing page shell on server / before hydration to avoid mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1">
+          <HeroSection />
+          <FeaturesSection />
+          <PricingSection />
+          <CTASection />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Derive what to show synchronously
   const validPages = ['landing', 'signin', 'dashboard', 'compliance'];
   const safePage = !validPages.includes(currentPage)
     ? 'landing'
